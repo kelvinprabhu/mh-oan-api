@@ -44,9 +44,14 @@ async def get_current_user(token: str | None = Depends(oauth2_scheme)):
     Bypasses authentication in development environment.
     """
     # # Skip authentication in development environment
-    # if settings.environment == "development":
-    #     logger.info("Development environment detected - bypassing authentication")
-    #     return "development_user"
+    if settings.environment == "development":
+        logger.info("Development environment detected - bypassing authentication")
+        return {
+            "sub": "dev_user",
+            "farmer_id": "dev_farmer_123",
+            "name": "Development User",
+            "roles": ["farmer"]
+        }
     
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

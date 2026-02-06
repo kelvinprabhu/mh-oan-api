@@ -4,7 +4,8 @@ from pydantic_ai.models.gemini import GeminiModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.providers.google_gla import GoogleGLAProvider
 from dotenv import load_dotenv
-
+from pydantic_ai.models.groq import GroqModel
+from pydantic_ai.providers.groq import GroqProvider
 load_dotenv()
 
 # Get configurations from environment variables
@@ -19,6 +20,7 @@ if LLM_PROVIDER == 'vllm':
             api_key=os.getenv('INFERENCE_API_KEY'),  
         ),
     )
+    
 elif LLM_PROVIDER == 'openai':
     LLM_MODEL = OpenAIModel(
         LLM_MODEL_NAME,
@@ -26,6 +28,13 @@ elif LLM_PROVIDER == 'openai':
             api_key=os.getenv('OPENAI_API_KEY'),
         ),
     )
+elif LLM_PROVIDER == 'groq':
+    LLM_MODEL = GroqModel(
+        LLM_MODEL_NAME,
+        provider=GroqProvider(
+            api_key=os.getenv('GROQ_API_KEY'),
+        ),
+    )
 else:
-    raise ValueError(f"Invalid LLM_PROVIDER: {LLM_PROVIDER}. Must be one of: 'gemini', 'qwen', 'openai'")
+    raise ValueError(f"Invalid LLM_PROVIDER: {LLM_PROVIDER}. Must be one of: 'gemini', 'qwen', 'openai','groq'")
 
