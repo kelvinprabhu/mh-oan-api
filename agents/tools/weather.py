@@ -7,7 +7,7 @@ from pydantic import BaseModel, AnyHttpUrl, Field
 from typing import List, Optional, Dict, Any, Tuple
 from dateutil import parser
 from dateutil.parser import ParserError
-from pydantic_ai import ModelRetry, UnexpectedModelBehavior
+from pydantic_ai import ModelRetry, UnexpectedModelBehavior, RunContext
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -448,10 +448,11 @@ class WeatherRequest(BaseModel):
 
 
     
-async def weather_forecast(latitude: float, longitude: float, days: int = 5) -> str:
+async def weather_forecast(ctx: RunContext[Any], latitude: float, longitude: float, days: int = 5) -> str:
     """Get Weather forecast for a specific location.
 
     Args:
+        ctx: Runtime context from the agent
         latitude (float): Latitude of the location
         longitude (float): Longitude of the location
         days (int): Number of days for weather forecast (defaults to 5)
@@ -487,10 +488,11 @@ async def weather_forecast(latitude: float, longitude: float, days: int = 5) -> 
         logger.error(f"Error getting weather forecast: {e}")
         raise ModelRetry(f"Unexpected error in weather forecast. {str(e)}")
 
-async def weather_historical(latitude: float, longitude: float, days: int = 5) -> str:
+async def weather_historical(ctx: RunContext[Any], latitude: float, longitude: float, days: int = 5) -> str:
     """Get historical weather data for a specific location.
 
     Args:
+        ctx: Runtime context from the agent
         latitude (float): Latitude of the location
         longitude (float): Longitude of the location
         days (int): Number of days for weather history (defaults to 5)

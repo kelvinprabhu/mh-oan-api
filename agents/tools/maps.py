@@ -2,8 +2,9 @@ import os
 from dotenv import load_dotenv
 from mapbox import Geocoder
 from cachecontrol.caches.file_cache import FileCache
-from typing import Optional
+from typing import Optional, Any
 from pydantic import BaseModel, Field, field_validator
+from pydantic_ai import RunContext
 from helpers.utils import get_logger
 
 logger = get_logger(__name__)
@@ -54,10 +55,11 @@ class Location(BaseModel):
         return f"{self.place_name} ({self.latitude}, {self.longitude})"
     
 
-async def forward_geocode(place_name: str) -> Optional[Location]:
+async def forward_geocode(ctx: RunContext[Any], place_name: str) -> Optional[Location]:
     """Forward Geocoding to get latitude and longitude from place name.
 
     Args:
+        ctx: Runtime context from the agent
         place_name (str): The place name to geocode, in English.
 
     Returns:
@@ -87,10 +89,11 @@ async def forward_geocode(place_name: str) -> Optional[Location]:
         logger.info(f"Error: {response.status_code}")
     return None
 
-async def reverse_geocode(latitude: float, longitude: float) -> Optional[Location]:
+async def reverse_geocode(ctx: RunContext[Any], latitude: float, longitude: float) -> Optional[Location]:
     """Reverse Geocoding to get place name from latitude and longitude.
 
     Args:
+        ctx: Runtime context from the agent
         latitude (float): The latitude of the location.
         longitude (float): The longitude of the location.
 

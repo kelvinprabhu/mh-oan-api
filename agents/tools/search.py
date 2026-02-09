@@ -4,9 +4,9 @@ Marqo client implementation for vector search.
 import os
 import re
 import marqo
-from typing import Optional, Literal
+from typing import Optional, Literal, Any
 from pydantic import BaseModel, Field
-from pydantic_ai import ModelRetry
+from pydantic_ai import ModelRetry, RunContext
 from helpers.utils import get_logger
 # NOTE: This is a hack to add Marathi terms to the search results.
 from agents.tools.terms import normalize_text_with_glossary
@@ -43,6 +43,7 @@ class SearchHit(BaseModel):
 
 
 async def search_documents(
+    ctx: RunContext[Any],
     query: str, 
     top_k: int = 10, 
 ) -> str:
@@ -50,6 +51,7 @@ async def search_documents(
     Semantic search for documents. Use this tool to search for relevant documents.
     
     Args:
+        ctx: Runtime context from the agent
         query: The search query in *English* (required)
         top_k: Maximum number of results to return (default: 10)
         
@@ -100,6 +102,7 @@ async def search_documents(
 
 
 async def search_videos(
+    ctx: RunContext[Any],
     query: str, 
     top_k: int = 3, 
 ) -> str:
@@ -107,6 +110,7 @@ async def search_videos(
     Semantic search for videos. Use this tool when recommending videos to the farmer.
     
     Args:
+        ctx: Runtime context from the agent
         query: The search query in *English* (required)
         top_k: Maximum number of results to return (default: 3)
         

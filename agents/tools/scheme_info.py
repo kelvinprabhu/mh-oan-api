@@ -6,7 +6,7 @@ from helpers.utils import get_logger
 import requests
 from pydantic import BaseModel, AnyHttpUrl, Field
 from typing import List, Optional, Dict, Any
-from pydantic_ai import ModelRetry, UnexpectedModelBehavior
+from pydantic_ai import ModelRetry, UnexpectedModelBehavior, RunContext
 
 logger = get_logger(__name__)
 
@@ -286,10 +286,11 @@ def _validate_scheme_code(scheme_code: str) -> bool:
     return any(scheme['scheme_code'] == scheme_code for scheme in scheme_list)
 
 
-async def get_scheme_type(scheme_code: str) -> str:
+async def get_scheme_type(ctx: RunContext[Any], scheme_code: str) -> str:
     """Get the type of a scheme (state or central).
     
     Args:
+        ctx: Runtime context from the agent
         scheme_code (str): The scheme code to check.
         
     Returns:
@@ -302,9 +303,12 @@ async def get_scheme_type(scheme_code: str) -> str:
     else:
         return "unknown"
 
-async def get_scheme_codes() -> str:
+async def get_scheme_codes(ctx: RunContext[Any]) -> str:
     """Returns a prioritized list of scheme names and codes with state schemes first.
     
+    Args:
+        ctx: Runtime context from the agent
+        
     Returns:
         str: A markdown-formatted table with scheme names and codes, prioritizing state schemes.
     """
@@ -343,7 +347,7 @@ async def get_scheme_codes() -> str:
 
 
 
-async def get_scheme_info(scheme_code: str) -> str:
+async def get_scheme_info(ctx: RunContext[Any], scheme_code: str) -> str:
     """Retrieve detailed information about government agricultural schemes.
     
     This tool fetches comprehensive scheme data including benefits, eligibility criteria, application process, and other relevant details for agricultural schemes. 
@@ -351,6 +355,7 @@ async def get_scheme_info(scheme_code: str) -> str:
     Available scheme codes can be found by calling `get_scheme_codes()` which returns a markdown table with scheme names and codes.
 
     Args:
+        ctx: Runtime context from the agent
         scheme_code (str): Code of the scheme to retrieve (e.g., 'pmkisan', 'pmfby').
 
     Returns:
@@ -395,13 +400,14 @@ async def get_scheme_info(scheme_code: str) -> str:
         raise ModelRetry(f"Unexpected error in scheme request. {str(e)}") 
 
 
-async def get_multiple_schemes_info(scheme_codes: List[str]) -> str:
+async def get_multiple_schemes_info(ctx: RunContext[Any], scheme_codes: List[str]) -> str:
     """Retrieve detailed information about multiple government agricultural schemes with automatic prioritization.
     
     This tool fetches comprehensive scheme data for multiple schemes at once and automatically returns them 
     in the correct order: Maharashtra state schemes FIRST, then central schemes SECOND.
     
     Args:
+        ctx: Runtime context from the agent
         scheme_codes (List[str]): List of scheme codes to retrieve (e.g., ['state scheme code', 'central scheme code', 'central scheme code']).
 
     Returns:
@@ -422,7 +428,7 @@ async def get_multiple_schemes_info(scheme_codes: List[str]) -> str:
         central_schemes = []
         
         for code in scheme_codes:
-            scheme_type = await get_scheme_type(code)
+            scheme_type = await get_scheme_type(ctx, code)
             if scheme_type == "state":
                 state_schemes.append(code)
             elif scheme_type == "central":
@@ -434,7 +440,7 @@ async def get_multiple_schemes_info(scheme_codes: List[str]) -> str:
         # Fetch information for each scheme in order
         results = []
         for idx, code in enumerate(ordered_schemes, start=1):
-            scheme_info = await get_scheme_info(code)
+            scheme_info = await get_scheme_info(ctx, code)
             # Add a numbered header for each scheme
             results.append(f"## {idx}. Scheme Information\n\n{scheme_info}")
         

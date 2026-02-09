@@ -1,6 +1,8 @@
 import json
 from enum import Enum
+from typing import Any
 from pydantic import BaseModel, Field
+from pydantic_ai import RunContext
 from rapidfuzz import fuzz
 
 # Load term pairs from JSON file with UTF-8 encoding
@@ -23,6 +25,7 @@ class TermPair(BaseModel):
 TERM_PAIRS = [TermPair(**pair) for pair in term_pairs]
 
 async def search_terms(
+    ctx: RunContext[Any],
     term: str, 
     max_results: int = 5,
     threshold: float = 0.7,
@@ -31,6 +34,7 @@ async def search_terms(
     """Search for terms using fuzzy partial string matching across all fields.
     
     Args:
+        ctx: Runtime context from the agent
         term: The term to search for
         max_results: Maximum number of results to return
         threshold: Minimum similarity score (0-1) to consider a match (default is 0.7)

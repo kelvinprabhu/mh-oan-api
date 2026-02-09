@@ -5,7 +5,7 @@ from helpers.utils import get_logger
 import requests
 from pydantic import BaseModel, AnyHttpUrl, Field
 from typing import List, Optional, Dict, Any
-from pydantic_ai import ModelRetry, UnexpectedModelBehavior
+from pydantic_ai import ModelRetry, UnexpectedModelBehavior, RunContext
 from dotenv import load_dotenv
 from dateutil import parser
 import humanize
@@ -278,10 +278,11 @@ class MandiRequest(BaseModel):
             }
         }
 
-async def mandi_prices(latitude: float, longitude: float) -> str:
+async def mandi_prices(ctx: RunContext[Any], latitude: float, longitude: float) -> str:
     """Get Market/Mandi prices for a specific location.
 
     Args:
+        ctx: Runtime context from the agent
         latitude (float): Latitude of the location
         longitude (float): Longitude of the location
 

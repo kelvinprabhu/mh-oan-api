@@ -6,7 +6,7 @@ from helpers.utils import get_logger
 import requests
 from pydantic import BaseModel, AnyHttpUrl, Field
 from typing import List, Optional, Dict, Any
-from pydantic_ai import ModelRetry, UnexpectedModelBehavior
+from pydantic_ai import ModelRetry, UnexpectedModelBehavior, RunContext
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -440,10 +440,11 @@ def _get_village_code_from_admin_api(latitude: float, longitude: float) -> Optio
 # -----------------------
 # Contact information for - aa (Agricultural Assistant), ga (Government Agricultural Staff)
 # -----------------------
-async def contact_agricultural_staff(latitude: float, longitude: float) -> str:
+async def contact_agricultural_staff(ctx: RunContext[Any], latitude: float, longitude: float) -> str:
     """Get the contact information for the agricultural staff for a specific location.
 
     Args:
+        ctx: Runtime context from the agent
         latitude (float): Latitude of the location
         longitude (float): Longitude of the location
 
