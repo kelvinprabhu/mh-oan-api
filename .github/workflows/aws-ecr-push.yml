@@ -9,6 +9,7 @@ env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
   IMAGE_TAG: ${{ github.sha }}
+  SERVICE_NAME: mh-oan-api-LLM
 
 jobs:
   build-and-push:
@@ -48,8 +49,8 @@ jobs:
             --build-arg LANGFUSE_SECRET_KEY=${{ secrets.LANGFUSE_SECRET_KEY }} \
             --build-arg LANGFUSE_PUBLIC_KEY=${{ secrets.LANGFUSE_PUBLIC_KEY }} \
             --build-arg LANGFUSE_BASE_URL=${{ secrets.LANGFUSE_BASE_URL }} \
-            -t $IMAGE_URI:$IMAGE_TAG .
-          docker tag $IMAGE_URI:$IMAGE_TAG $IMAGE_URI:llm-latest
-          docker push $IMAGE_URI:$IMAGE_TAG
+            -t $IMAGE_URI:$SERVICE_NAME-$IMAGE_TAG .
+          docker tag $IMAGE_URI:$SERVICE_NAME-$IMAGE_TAG $IMAGE_URI:llm-latest
+          docker push $IMAGE_URI:$SERVICE_NAME-$IMAGE_TAG
           docker push $IMAGE_URI:llm-latest
-          echo "Image pushed: $IMAGE_URI:$IMAGE_TAG"
+          echo "Image pushed: $IMAGE_URI:$SERVICE_NAME-$IMAGE_TAG"
