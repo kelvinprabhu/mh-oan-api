@@ -50,7 +50,7 @@ jobs:
             --build-arg LANGFUSE_PUBLIC_KEY=${{ secrets.LANGFUSE_PUBLIC_KEY }} \
             --build-arg LANGFUSE_BASE_URL=${{ secrets.LANGFUSE_BASE_URL }} \
             -t $IMAGE_URI:$SERVICE_NAME .
-          docker tag $SERVICE_NAME- $IMAGE_URI:llm-latest
-          docker push $SERVICE_NAME
-          docker push $SERVICE_NAME:latest
+          docker tag $IMAGE_URI:$SERVICE_NAME $IMAGE_URI:$SERVICE_NAME-latest
+          docker push $IMAGE_URI:$SERVICE_NAME
+          docker push $IMAGE_URI:$SERVICE_NAME-latest
           echo "Image pushed: $IMAGE_URI:$SERVICE_NAME"
