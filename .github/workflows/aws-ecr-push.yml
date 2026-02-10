@@ -9,7 +9,7 @@ env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
   IMAGE_TAG: ${{ github.sha }}
-  SERVICE_NAME: mh-oan-api-llm
+  SERVICE_NAME: mh-oan-api-LLM
 
 jobs:
   build-and-push:
@@ -38,7 +38,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          IMAGE_URI=$ECR_REGISTRY/$SERVICE_NAME
+          IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY
           docker build \
             --build-arg LLM_PROVIDER=${{ vars.LLM_PROVIDER }} \
             --build-arg LLM_MODEL_NAME=${{ vars.LLM_MODEL_NAME }} \
@@ -49,8 +49,8 @@ jobs:
             --build-arg LANGFUSE_SECRET_KEY=${{ secrets.LANGFUSE_SECRET_KEY }} \
             --build-arg LANGFUSE_PUBLIC_KEY=${{ secrets.LANGFUSE_PUBLIC_KEY }} \
             --build-arg LANGFUSE_BASE_URL=${{ secrets.LANGFUSE_BASE_URL }} \
-            -t $IMAGE_URI:$IMAGE_TAG .
-          docker tag $IMAGE_URI:$IMAGE_TAG $IMAGE_URI:latest
-          docker push $IMAGE_URI:$IMAGE_TAG
-          docker push $IMAGE_URI:latest
-          echo "Image pushed: $IMAGE_URI:$IMAGE_TAG"
+            -t $IMAGE_URI:$SERVICE_NAME .
+          docker tag $SERVICE_NAME- $IMAGE_URI:llm-latest
+          docker push $SERVICE_NAME
+          docker push $SERVICE_NAME:latest
+          echo "Image pushed: $IMAGE_URI:$SERVICE_NAME"
