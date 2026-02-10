@@ -1,4 +1,4 @@
-name: mh-oan-api
+name: AWS - ECR Push
 
 on:
   push:
@@ -6,20 +6,9 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: ${{ vars.AWS_REGION }}              # e.g. ap-south-1
-  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}      # e.g. mh-oan-api
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
   IMAGE_TAG: ${{ github.sha }}
-  CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
-  LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
-  LLM_MODEL_NAME: ${{ vars.LLM_MODEL_NAME }}
-  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-  MAPBOX_API_TOKEN: ${{ secrets.MAPBOX_API_TOKEN }}
-  ENVIRONMENT: ${{ vars.ENVIRONMENT }}              
-  logfire_token: ${{ secrets.LOGFIRE_TOKEN }} 
-  LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
-  LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
-  LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
-
 
 jobs:
   build-and-push:
@@ -49,7 +38,17 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY
-          docker build -t $IMAGE_URI:$IMAGE_TAG .
+          docker build \
+            --build-arg LLM_PROVIDER=${{ vars.LLM_PROVIDER }} \
+            --build-arg LLM_MODEL_NAME=${{ vars.LLM_MODEL_NAME }} \
+            --build-arg GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} \
+            --build-arg MAPBOX_API_TOKEN=${{ secrets.MAPBOX_API_TOKEN }} \
+            --build-arg ENVIRONMENT=${{ vars.ENVIRONMENT }} \
+            --build-arg LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} \
+            --build-arg LANGFUSE_SECRET_KEY=${{ secrets.LANGFUSE_SECRET_KEY }} \
+            --build-arg LANGFUSE_PUBLIC_KEY=${{ secrets.LANGFUSE_PUBLIC_KEY }} \
+            --build-arg LANGFUSE_BASE_URL=${{ secrets.LANGFUSE_BASE_URL }} \
+            -t $IMAGE_URI:$IMAGE_TAG .
           docker tag $IMAGE_URI:$IMAGE_TAG $IMAGE_URI:latest
           docker push $IMAGE_URI:$IMAGE_TAG
           docker push $IMAGE_URI:latest
