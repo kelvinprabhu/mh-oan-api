@@ -9,7 +9,7 @@ env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
   IMAGE_TAG: ${{ github.sha }}
-  SERVICE_NAME: mh-oan-api-LLM
+  SERVICE_NAME: mh-oan-api-llm
 
 jobs:
   build-and-push:
