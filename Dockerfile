@@ -1,24 +1,26 @@
-# Use Python as the base image
-FROM python:3.10-slim
+# ---------- base ----------
+FROM python:3.10-slim AS base
 
-# Set work directory
+LABEL org.opencontainers.image.title="MH-OAN API" \
+      org.opencontainers.image.source="https://github.com/OpenAgriNet/mh-oan-api" \
+      org.opencontainers.image.description="MahaVistaar AI API – Agricultural Voice Assistant"
+
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     gcc \
     python3-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better Docker layer caching
+# ---------- dependencies ----------
 COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
+# ---------- application ----------
 COPY . .
 
 # Create logs directory for supervisord
@@ -27,13 +29,12 @@ RUN mkdir -p /app/logs
 # Copy supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Create non-root user for security (optional)
-# RUN useradd --create-home --shell /bin/bash app
-# RUN chown -R app:app /app
-# USER app
-
 # Expose FastAPI port
 EXPOSE 8000
 
-# Start supervisor to manage both FastAPI and Celery
+# Health check using the liveness endpoint
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl -f http://localhost:8000/health/live || exit 1
+
+# Start supervisor (manages uvicorn workers)
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

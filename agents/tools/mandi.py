@@ -278,11 +278,10 @@ class MandiRequest(BaseModel):
             }
         }
 
-async def mandi_prices(ctx: RunContext[Any], latitude: float, longitude: float) -> str:
+def mandi_prices(latitude: float, longitude: float) -> str:
     """Get Market/Mandi prices for a specific location.
 
     Args:
-        ctx: Runtime context from the agent
         latitude (float): Latitude of the location
         longitude (float): Longitude of the location
 

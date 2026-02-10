@@ -55,11 +55,10 @@ class Location(BaseModel):
         return f"{self.place_name} ({self.latitude}, {self.longitude})"
     
 
-async def forward_geocode(ctx: RunContext[Any], place_name: str) -> Optional[Location]:
+def forward_geocode(place_name: str) -> Optional[Location]:
     """Forward Geocoding to get latitude and longitude from place name.
 
     Args:
-        ctx: Runtime context from the agent
         place_name (str): The place name to geocode, in English.
 
     Returns:
@@ -89,11 +88,10 @@ async def forward_geocode(ctx: RunContext[Any], place_name: str) -> Optional[Loc
         logger.info(f"Error: {response.status_code}")
     return None
 
-async def reverse_geocode(ctx: RunContext[Any], latitude: float, longitude: float) -> Optional[Location]:
+def reverse_geocode(latitude: float, longitude: float) -> Optional[Location]:
     """Reverse Geocoding to get place name from latitude and longitude.
 
     Args:
-        ctx: Runtime context from the agent
         latitude (float): The latitude of the location.
         longitude (float): The longitude of the location.
 

@@ -24,8 +24,7 @@ class TermPair(BaseModel):
 # Convert raw dictionaries to TermPair objects
 TERM_PAIRS = [TermPair(**pair) for pair in term_pairs]
 
-async def search_terms(
-    ctx: RunContext[Any],
+def search_terms(
     term: str, 
     max_results: int = 5,
     threshold: float = 0.7,
@@ -34,7 +33,6 @@ async def search_terms(
     """Search for terms using fuzzy partial string matching across all fields.
     
     Args:
-        ctx: Runtime context from the agent
         term: The term to search for
         max_results: Maximum number of results to return
         threshold: Minimum similarity score (0-1) to consider a match (default is 0.7)
@@ -117,7 +115,7 @@ def normalize_text_with_glossary(text: str, threshold=97):
             marathi = EN_INDEX[lw].mr
         else:
             # Fuzzy fallback (very high threshold to avoid false positives)
-            match_term, score, _ = process.extractOne(
+            match_term, _, _ = process.extractOne(
                 lw, EN_TERMS, score_cutoff=threshold
             ) or (None, 0, None)
             if not match_term:

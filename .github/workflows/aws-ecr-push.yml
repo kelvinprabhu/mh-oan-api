@@ -1,0 +1,56 @@
+name: mh-oan-api
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}              # e.g. ap-south-1
+  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}      # e.g. mh-oan-api
+  IMAGE_TAG: ${{ github.sha }}
+  CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
+  LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
+  LLM_MODEL_NAME: ${{ vars.LLM_MODEL_NAME }}
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  MAPBOX_API_TOKEN: ${{ secrets.MAPBOX_API_TOKEN }}
+  ENVIRONMENT: ${{ vars.ENVIRONMENT }}              
+  logfire_token: ${{ secrets.LOGFIRE_TOKEN }} 
+  LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+  LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+  LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
+
+
+jobs:
+  build-and-push:
+    name: Build & Push to ECR
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag & push image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY
+          docker build -t $IMAGE_URI:$IMAGE_TAG .
+          docker tag $IMAGE_URI:$IMAGE_TAG $IMAGE_URI:latest
+          docker push $IMAGE_URI:$IMAGE_TAG
+          docker push $IMAGE_URI:latest
+          echo "Image pushed: $IMAGE_URI:$IMAGE_TAG"

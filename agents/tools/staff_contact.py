@@ -440,11 +440,10 @@ def _get_village_code_from_admin_api(latitude: float, longitude: float) -> Optio
 # -----------------------
 # Contact information for - aa (Agricultural Assistant), ga (Government Agricultural Staff)
 # -----------------------
-async def contact_agricultural_staff(ctx: RunContext[Any], latitude: float, longitude: float) -> str:
+def contact_agricultural_staff(latitude: float, longitude: float) -> str:
     """Get the contact information for the agricultural staff for a specific location.
 
     Args:
-        ctx: Runtime context from the agent
         latitude (float): Latitude of the location
         longitude (float): Longitude of the location
 

@@ -42,8 +42,7 @@ class SearchHit(BaseModel):
             return f"**[{self.name}]({self.source})**\n" + "```\n" + self.processed_text + "\n```\n"
 
 
-async def search_documents(
-    ctx: RunContext[Any],
+def search_documents(
     query: str, 
     top_k: int = 10, 
 ) -> str:
@@ -51,7 +50,6 @@ async def search_documents(
     Semantic search for documents. Use this tool to search for relevant documents.
     
     Args:
-        ctx: Runtime context from the agent
         query: The search query in *English* (required)
         top_k: Maximum number of results to return (default: 10)
         
@@ -71,7 +69,7 @@ async def search_documents(
         client = marqo.Client(url=endpoint_url)
         logger.info(f"Searching for '{query}' in index '{index_name}'")
         
-        filter_string = f"type:document"
+        filter_string = "type:document"
             
         # Perform search
         search_params = {
@@ -101,8 +99,7 @@ async def search_documents(
         raise ModelRetry(f"Error searching documents, please try again")
 
 
-async def search_videos(
-    ctx: RunContext[Any],
+def search_videos(
     query: str, 
     top_k: int = 3, 
 ) -> str:
@@ -110,7 +107,6 @@ async def search_videos(
     Semantic search for videos. Use this tool when recommending videos to the farmer.
     
     Args:
-        ctx: Runtime context from the agent
         query: The search query in *English* (required)
         top_k: Maximum number of results to return (default: 3)
         

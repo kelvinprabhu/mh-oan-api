@@ -16,6 +16,9 @@ tiktoken
 # Logfire
 logfire
 
+# Langfuse
+langfuse
+
 # Redis for caching and stuff
 redis
 

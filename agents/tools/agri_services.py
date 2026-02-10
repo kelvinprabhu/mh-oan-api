@@ -264,11 +264,10 @@ class AgriServicesRequest(BaseModel):
         }
 
 
-async def agri_services(ctx: RunContext[Any], latitude: float, longitude: float, category_code: Literal["kvk", "chc", "soil_lab", "warehouse"]) -> str:
+def agri_services(latitude: float, longitude: float, category_code: Literal["kvk", "chc", "soil_lab", "warehouse"]) -> str:
     """Fetch agricultural services (KVK, CHC, soil labs, warehouse) for a given location via BAP.
 
     Args:
-        ctx: Runtime context from the agent
         latitude: Latitude of the location
         longitude: Longitude of the location
         category_code: Service category to fetch - 'kvk' for Krishi Vigyan Kendra, 'chc' for Custom Hiring Center, 'soil_lab' for soil testing laboratories, 'warehouse' for warehouses
