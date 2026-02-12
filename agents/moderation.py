@@ -33,6 +33,6 @@ moderation_agent = Agent(
     model_settings=ModelSettings(
         temperature=0.1,
         max_tokens=32,
-        timeout=5 # NOTE: Added timeout to avoid infinite loops
+        # timeout=5 # NOTE: Added timeout to avoid infinite loops
     )
 )
