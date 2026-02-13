@@ -59,7 +59,13 @@ class Settings(BaseSettings):
     bhashini_api_url: str = ""
     ollama_endpoint_url: Optional[str] = None
     marqo_endpoint_url: Optional[str] = None
+    marqo_endpoint_url: Optional[str] = None
     inference_endpoint_url: Optional[str] = None
+
+    # BAP Configuration
+    bap_id: Optional[str] = "oan-mock"
+    bap_uri: Optional[str] = "http://localhost:8001"
+    bap_endpoint: Optional[str] = "http://localhost:8001/api/v1/search"
 
     # External Service API Keys
     openai_api_key: Optional[str] = None

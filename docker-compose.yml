@@ -10,6 +10,9 @@ services:
         MAPBOX_API_TOKEN: ${MAPBOX_API_TOKEN}
         ENVIRONMENT: ${ENVIRONMENT}
         LOGFIRE_TOKEN: ${LOGFIRE_TOKEN}
+        BAP_ID: ${BAP_ID}
+        BAP_URI: ${BAP_URI}
+        BAP_ENDPOINT: ${BAP_ENDPOINT}
     ports:
       - "8000:8000"
     expose:

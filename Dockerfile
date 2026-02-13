@@ -66,10 +66,19 @@ ENV LLM_PROVIDER=${LLM_PROVIDER} \
     ENVIRONMENT=${ENVIRONMENT} \
     LOGFIRE_TOKEN=${LOGFIRE_TOKEN}
 
+# BAP Configuration
+ARG BAP_ID
+ARG BAP_URI
+ARG BAP_ENDPOINT
+
+ENV BAP_ID=${BAP_ID} \
+    BAP_URI=${BAP_URI} \
+    BAP_ENDPOINT=${BAP_ENDPOINT}
+
 EXPOSE 8000
 
 # Make entrypoint executable
-RUN chmod +x /app/scripts/entrypoint.sh
+RUN chmod +x /app/scripts/entrypoint.sh && sed -i 's/\r$//' /app/scripts/entrypoint.sh
 
 ENTRYPOINT ["/app/scripts/entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
