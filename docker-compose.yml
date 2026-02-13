@@ -1,7 +1,15 @@
 services:
   app:
     container_name: sva_app
-    build: .
+    build:
+      context: .
+      args:
+        LLM_PROVIDER: ${LLM_PROVIDER}
+        LLM_MODEL_NAME: ${LLM_MODEL_NAME}
+        GEMINI_API_KEY: ${GEMINI_API_KEY}
+        MAPBOX_API_TOKEN: ${MAPBOX_API_TOKEN}
+        ENVIRONMENT: ${ENVIRONMENT}
+        LOGFIRE_TOKEN: ${LOGFIRE_TOKEN}
     ports:
       - "8000:8000"
     expose:
@@ -13,7 +21,29 @@ services:
     restart: unless-stopped
     networks:
       - svanetwork
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - svanetwork
+
+  nominatim:
+    image: mediagis/nominatim:5.1
+    ports:
+      - "8080:8080"
+    environment:
+      - NOMINATIM_THREADS=4
+      - NOMINATIM_MEMORY=2G
+    restart: unless-stopped
+    volumes:
+      - nominatim-data:/var/lib/postgresql/14/main
+    networks:
+      - svanetwork
       
 networks:
   svanetwork:
     external: true
+volumes:
+  nominatim-data:
