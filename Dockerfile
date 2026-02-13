@@ -77,8 +77,12 @@ ENV BAP_ID=${BAP_ID} \
 
 EXPOSE 8000
 
-# Make entrypoint executable
-RUN chmod +x /app/scripts/entrypoint.sh && sed -i 's/\r$//' /app/scripts/entrypoint.sh
+# Fix line endings and make entrypoint executable
+RUN chmod +x /app/scripts/entrypoint.sh && \
+    sed -i 's/\r$//' /app/scripts/entrypoint.sh
 
+# Set entrypoint to the correct script
 ENTRYPOINT ["/app/scripts/entrypoint.sh"]
+
+# Default command that will be passed to entrypoint
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
