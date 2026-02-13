@@ -36,16 +36,17 @@ ENV LLM_PROVIDER=${LLM_PROVIDER} \
     GEMINI_API_KEY=${GEMINI_API_KEY} \
     MAPBOX_API_TOKEN=${MAPBOX_API_TOKEN} \
     ENVIRONMENT=${ENVIRONMENT} \
-    LOGFIRE_TOKEN=${LOGFIRE_TOKEN} \
-    LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY} \
-    LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY} \
-    LANGFUSE_BASE_URL=${LANGFUSE_BASE_URL}
+    LOGFIRE_TOKEN=${LOGFIRE_TOKEN} 
+
 
 # ---------- application ----------
 COPY . .
 
 # Create logs directory for supervisord
 RUN mkdir -p /app/logs
+
+# Generate JWT RSA key pair if not already present
+RUN python generate_keys.py
 
 # Copy supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

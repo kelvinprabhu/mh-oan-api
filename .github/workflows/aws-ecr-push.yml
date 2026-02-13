@@ -46,9 +46,7 @@ jobs:
             --build-arg MAPBOX_API_TOKEN=${{ secrets.MAPBOX_API_TOKEN }} \
             --build-arg ENVIRONMENT=${{ vars.ENVIRONMENT }} \
             --build-arg LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} \
-            --build-arg LANGFUSE_SECRET_KEY=${{ secrets.LANGFUSE_SECRET_KEY }} \
-            --build-arg LANGFUSE_PUBLIC_KEY=${{ secrets.LANGFUSE_PUBLIC_KEY }} \
-            --build-arg LANGFUSE_BASE_URL=${{ secrets.LANGFUSE_BASE_URL }} \
+
             -t $IMAGE_URI:$SERVICE_NAME .
           docker tag $IMAGE_URI:$SERVICE_NAME $IMAGE_URI:$SERVICE_NAME-latest
           docker push $IMAGE_URI:$SERVICE_NAME
